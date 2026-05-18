@@ -15,9 +15,9 @@
 | 프론트엔드 | Next.js App Router + TypeScript | 내부/독자 화면 통합 가능 |
 | 백엔드 | NestJS + TypeScript | REST API |
 | 데이터베이스 | PostgreSQL | TypeORM Repository 패턴 |
-| 작업 큐 | BullMQ 또는 Nest Schedule | 수집/예약공개/배포 작업 |
-| 캐시 | Redis | 큐 사용 시 필수 |
-| 인증 | Google OAuth 또는 이메일 OTP + JWT | 최종 방식 확인 필요 |
+| 작업 큐 | Nest Schedule | v0.1 예약 공개/이메일 배포 작업. BullMQ는 후속 확장 후보 |
+| 캐시 | 사용 안 함 | Redis는 BullMQ 도입 시 추가 |
+| 인증 | Google OAuth + 이메일 OTP + JWT | 내부 운영자는 Google OAuth, 독자는 이메일 OTP |
 | 인프라 | Docker / Docker Compose | 로컬 개발 기준 |
 
 ---
@@ -85,8 +85,8 @@ infrastructure
   orm-entities: DB 매핑
   collectors: RSS/API 수집 어댑터
   mail: 이메일 발송 어댑터
-  messaging: Discord/Slack 배포 어댑터
-  scheduler: 예약 공개/수집 작업
+  mail: 이메일 배포 어댑터
+  scheduler: 예약 공개/이메일 배포 작업
 ```
 
 ### 계층 금지 규칙
@@ -108,7 +108,7 @@ infrastructure
 - 뉴스 공개 범위의 기준이 될 수 있다.
 
 ### 5-3. NewsSource
-- RSS/API/수동 제보 같은 뉴스 원천이다.
+- RSS/API/수동 등록 같은 뉴스 원천이다. v0.1에서 외부 제보 원천은 제외한다.
 - 활성/비활성, 실패 횟수, 마지막 수집 시각을 가진다.
 
 ### 5-4. NewsCandidate
@@ -163,7 +163,7 @@ infrastructure
 ### 6-4. news_sources
 - `id`
 - `name`
-- `source_type`: `RSS | API | MANUAL | SUBMISSION`
+- `source_type`: `RSS | API | MANUAL`
 - `url`
 - `status`: `ACTIVE | INACTIVE | BLOCKED`
 - `last_fetched_at`
@@ -221,7 +221,7 @@ infrastructure
 ### 6-8. distribution_jobs
 - `id`
 - `snapshot_id`
-- `channel`: `WEB | EMAIL | DISCORD | SLACK | TELEGRAM`
+- `channel`: `WEB | EMAIL`
 - `status`: `NOT_SENT | SENDING | SENT | PARTIAL_FAILED | FAILED`
 - `started_at`
 - `finished_at`
@@ -349,9 +349,9 @@ infrastructure
 
 | 항목 | 후보 | 현재 상태 |
 |---|---|---|
-| 인증 방식 | Google OAuth / 이메일 OTP / 이메일+비밀번호 | 확인 필요 |
-| 배포 채널 | 웹 / 이메일 / Discord / Slack / Telegram | 확인 필요 |
-| 뉴스 수집 | RSS / API / 수동 / 제보 | 확인 필요 |
-| 유료 구독 | 포함 / 제외 | v0.1 제외 가정 |
-| AI 요약 | 포함 / 제외 | v0.1 제외 가정 |
-| 공개 범위 | 조직별 / 초대링크 / 공개링크 | 확인 필요 |
+| 인증 방식 | 내부 Google OAuth, 독자 이메일 OTP | v0.1 확정 |
+| 배포 채널 | 웹 + 이메일 | v0.1 확정 |
+| 뉴스 수집 | RSS / API / 수동 등록 | v0.1 확정, 외부 제보 제외 |
+| 유료 구독 | 제외 | v0.1 확정 |
+| AI 요약 | 제외 | v0.1 확정 |
+| 공개 범위 | 비공개 / 조직별 / 초대링크 | v0.1 확정, 공개링크 제외 |

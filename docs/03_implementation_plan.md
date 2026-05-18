@@ -1,20 +1,22 @@
 # secretNewsService Implementation Plan
 
-> **For Hermes:** Use subagent-driven-development skill to implement this plan task-by-task after Juno confirms the v0.1 product direction.
+> **For Hermes:** Use subagent-driven-development skill to implement this plan task-by-task. Phase 0 product direction is confirmed by Juno using the recommended defaults.
 
 **Goal:** Build a secure state-based news/content operation service for restricted news collection, editing, approval, publication, distribution, and audit tracking.
 
 **Architecture:** Use a TypeScript monorepo with Next.js web, NestJS API, PostgreSQL, and a clean layered backend architecture. NewsArticle is the central aggregate; public/externally distributed content is rendered from immutable NewsSnapshot rows.
 
-**Tech Stack:** Next.js App Router, NestJS, PostgreSQL, TypeORM, Docker Compose, JWT auth, optional Redis/BullMQ for scheduled publication and distribution.
+**Tech Stack:** Next.js App Router, NestJS, PostgreSQL, TypeORM, Docker Compose, JWT auth, Google OAuth for internal operators, email OTP for readers, Nest Schedule for scheduled publication and email distribution.
 
 ---
 
-## Phase 0: Decision Gate
+## Phase 0: Decision Gate — Completed
 
 ### Task 0.1: Confirm product meaning
 
 **Objective:** Resolve unknowns before writing production code.
+
+**Status:** Completed. Juno approved the recommended defaults.
 
 **Files:**
 - Read: `docs/01_product_requirements.md`
@@ -22,15 +24,15 @@
 - Modify: `docs/01_product_requirements.md`
 - Modify: `docs/02_system_design.md`
 
-**Questions to answer:**
-1. Does `secret` mean private/internal, paid/subscriber-only, security-grade, anonymous leak, or just a codename?
-2. Which v0.1 channel is mandatory: web, email, Discord, Slack, Telegram?
-3. Which auth is required: Google OAuth, email OTP, email/password, invitation token?
-4. Is AI summarization/classification in v0.1 or deferred?
-5. Are external submissions required in v0.1?
+**Decisions:**
+1. `secret` means private/restricted news.
+2. v0.1 channels are web + email.
+3. Internal operators use Google OAuth; readers use email OTP.
+4. AI summarization/classification/tagging is deferred.
+5. External submissions/contributors are deferred.
 
 **Verification:**
-- No `확인 필요` item remains for v0.1 scope-critical behavior.
+- `docs/01_product_requirements.md` and `docs/02_system_design.md` contain no scope-critical `확인 필요` item for v0.1.
 
 ---
 
@@ -365,14 +367,11 @@ pnpm -r build
 
 ## Current Stop Point
 
-Do not start production implementation until Juno confirms Phase 0 decisions.
+Phase 0 decisions are confirmed. Proceed with Phase 1 scaffold and then Phase 2 shared constants.
 
-Allowed before confirmation:
-- document refinement
-- repository scaffold
-- non-domain tooling setup
-
-Not allowed before confirmation:
-- hard-coding auth method
-- hard-coding distribution channel
-- implementing AI/news collection assumptions as production behavior
+Still not allowed without a new Juno decision:
+- payment/subscription billing
+- Discord/Slack/Telegram distribution
+- AI summarization/classification/tagging
+- external submission/contributor workflow
+- production deployment or real email sending
